@@ -14,9 +14,9 @@ GameObject:
   - 96: {fileID: 9600000}
   - 61: {fileID: 6100000}
   - 114: {fileID: 11400000}
-  m_Layer: 9
-  m_Name: EnemyMissile
-  m_TagString: EnemyMissile
+  m_Layer: 8
+  m_Name: OutMissile
+  m_TagString: OurMissile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,11 +136,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3146a32ef1cede4a97e44e643ea6818, type: 3}
+  m_Script: {fileID: 11500000, guid: 80dda34399846ef43b96fe1f74962fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  speed: 1
+  speed: 3
+  target: {x: 0, y: 0, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
