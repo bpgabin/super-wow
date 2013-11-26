@@ -17,7 +17,7 @@ TagManager:
   Builtin Layer 7: 
   User Layer 8: OurMissiles
   User Layer 9: EnemyMissiles
-  User Layer 10: 
+  User Layer 10: Stations
   User Layer 11: 
   User Layer 12: 
   User Layer 13: 
@@ -47,4 +47,8 @@ TagManager:
   - name: Background
     userID: 1
     uniqueID: 1739612777
+    locked: 0
+  - name: Objects
+    userID: 2
+    uniqueID: 45526687
     locked: 0
