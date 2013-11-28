@@ -4,24 +4,38 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour, IEventListener {
 
+    public Camera explosionCamera;
     public float spawnDistance = 10f;
     public GameObject outMissile;
     public GameObject targetPrefab;
     public GameObject enemyMissilePrefab;
+    public GameObject explosionPrefab;
 
     public List<Transform> stations;
 
     private int missilesSpawned = 1;
 
     void Start() {
-        // Register for Station Destruction Event
+        Holoville.HOTween.HOTween.Init();
+
+        // Register for Events
         EventManager.instance.AddListener(this, "StationDestroyed", OnStationDestroyed);
+        EventManager.instance.AddListener(this, "MissileExploded", OnMissileExploded);
 
         // Begin Infinite Missile Spawner
-        StartCoroutine("SpawnMissiles");
+        //StartCoroutine("SpawnMissiles");
     }
 
     public bool HandleEvent(IEvent evt) { return true; }
+
+    public bool OnMissileExploded(IEvent evt) {
+        MissileExploded explosionEvent = evt as MissileExploded;
+        Vector3 screenLocation = Camera.main.WorldToScreenPoint(explosionEvent.position);
+        Vector3 newWorldLocation = explosionCamera.ScreenToWorldPoint(screenLocation);
+        newWorldLocation.z = -1f;
+        Instantiate(explosionPrefab, newWorldLocation, Quaternion.identity);
+        return true;
+    }
 
     public bool OnStationDestroyed(IEvent evt) {
         for (int i = 0; i < stations.Count; i++) {
@@ -55,10 +69,8 @@ public class GameManager : MonoBehaviour, IEventListener {
         GameObject newMissile = Instantiate(outMissile, launchPos, Quaternion.identity) as GameObject;
 
         OutMissile missileScript = newMissile.GetComponent<OutMissile>();
-        SpawnExplosion explosion = targetObject.GetComponent<SpawnExplosion>();
 
-        missileScript.target = target;
-        explosion.missile = newMissile;
+        missileScript.target = targetObject;
     }
 
     Transform GetClosestStation(Vector3 location) {

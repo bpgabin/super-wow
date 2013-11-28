@@ -6,12 +6,21 @@ public class Explosion : MonoBehaviour {
 
     public GameObject explosionPrefab;
 
+    public float heatValue = 1f;
+
 	// Use this for initialization
 	void Start () {
         Sequence sequence = new Sequence(new SequenceParms().OnComplete(OnAnimationCompletion));
-        sequence.Append(HOTween.From(transform, 3f, "localScale", new Vector3(2f, 2f, 2f)));
-        sequence.Append(HOTween.To(transform, 3, "localScale", new Vector3(2f, 2f, 2f)));
+        sequence.Append(HOTween.From(transform, 2f, "localScale", new Vector3(3f, 3f, 3f)));
+        sequence.AppendInterval(1f);
+        sequence.Append(HOTween.To(transform, 2f, "localScale", new Vector3(2f, 2f, 2f)));
+
+        Sequence heatSequence = new Sequence(new SequenceParms());
+        heatSequence.AppendInterval(3f);
+        heatSequence.Append(HOTween.To(this, 2f, "heatValue", 0.5f));
+
         sequence.Play();
+        heatSequence.Play();
 	}
 
     void OnAnimationCompletion() {
@@ -20,6 +29,8 @@ public class Explosion : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        renderer.material.SetFloat("_Heat", heatValue);
+
         Collider2D[] others = Physics2D.OverlapCircleAll(transform.position, transform.localScale.x / 3);
         foreach (Collider2D other in others) {
             if (other.gameObject.tag == "EnemyMissile") {

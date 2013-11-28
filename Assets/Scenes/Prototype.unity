@@ -256,7 +256,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 688355870}
   - 114: {fileID: 688355871}
-  - 68: {fileID: 688355872}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -286,27 +285,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50753db7c83e5934db6b540d3fe318d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionCamera: {fileID: 1906730197}
   spawnDistance: 15
   outMissile: {fileID: 100000, guid: 6306999907643c34a9c910661e7492b3, type: 2}
   targetPrefab: {fileID: 100000, guid: 1696bd0f48ddafd439cd9287b4beedf4, type: 2}
   enemyMissilePrefab: {fileID: 100000, guid: 9db604098539f7f48aa6ad553ab34632, type: 2}
+  explosionPrefab: {fileID: 100000, guid: c2542eb155f074fb7a4d3df66ac0673b, type: 2}
   stations:
   - {fileID: 1721856725}
   - {fileID: 2093571985}
   - {fileID: 1781799776}
   - {fileID: 391965417}
---- !u!68 &688355872
-EdgeCollider2D:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 688355869}
-  m_Enabled: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Points:
-  - {x: -.5, y: 0}
-  - {x: .5, y: 0}
 --- !u!1 &896480099
 GameObject:
   m_ObjectHideFlags: 0
@@ -469,6 +458,10 @@ Prefab:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: b84f8dc5be820224bb77d2e85052c772, type: 2}
+      propertyPath: m_CullingMask.m_Bits
+      value: 4294965247
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b84f8dc5be820224bb77d2e85052c772, type: 2}
   m_RootGameObject: {fileID: 1488356965}
@@ -542,7 +535,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967293
+    m_Bits: 4294965247
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
@@ -880,11 +873,11 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 20
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2
+    m_Bits: 2048
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
