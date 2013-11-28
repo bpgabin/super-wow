@@ -30,13 +30,5 @@ public class Explosion : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         renderer.material.SetFloat("_Heat", heatValue);
-
-        Collider2D[] others = Physics2D.OverlapCircleAll(transform.position, transform.localScale.x / 3);
-        foreach (Collider2D other in others) {
-            if (other.gameObject.tag == "EnemyMissile") {
-                Instantiate(explosionPrefab, other.transform.position, Quaternion.identity);
-                Destroy(other.gameObject);
-            }
-        }
 	}
 }

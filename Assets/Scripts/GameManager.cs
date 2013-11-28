@@ -14,8 +14,24 @@ public class GameManager : MonoBehaviour, IEventListener {
     public List<Transform> stations;
 
     private int missilesSpawned = 1;
+    private int m_score = 0;
+
+    private static GameManager s_instance = null;
+
+    public static GameManager instance {
+        get {
+            if (s_instance == null) {
+                Debug.LogError("GameManger Missing From Scene!");
+            }
+            return s_instance;
+        }
+    }
+
+    public int score { get { return m_score; } }
 
     void Start() {
+        s_instance = this;
+
         Holoville.HOTween.HOTween.Init();
 
         // Register for Events
@@ -23,18 +39,36 @@ public class GameManager : MonoBehaviour, IEventListener {
         EventManager.instance.AddListener(this, "MissileExploded", OnMissileExploded);
 
         // Begin Infinite Missile Spawner
-        //StartCoroutine("SpawnMissiles");
+        StartCoroutine("SpawnMissiles");
+
+        GameObject go = new GameObject("GUISystem");
+        go.AddComponent<GUISystem>();
     }
 
     public bool HandleEvent(IEvent evt) { return true; }
 
     public bool OnMissileExploded(IEvent evt) {
+        m_score += 50;
         MissileExploded explosionEvent = evt as MissileExploded;
         Vector3 screenLocation = Camera.main.WorldToScreenPoint(explosionEvent.position);
         Vector3 newWorldLocation = explosionCamera.ScreenToWorldPoint(screenLocation);
         newWorldLocation.z = -1f;
-        Instantiate(explosionPrefab, newWorldLocation, Quaternion.identity);
+        GameObject explosion = Instantiate(explosionPrefab, newWorldLocation, Quaternion.identity) as GameObject;
+        StartCoroutine(MissileChecker(explosion, explosionEvent.position));
         return true;
+    }
+
+    IEnumerator MissileChecker(GameObject explosion, Vector2 position) {
+        while (explosion != null) {
+            Collider2D[] others = Physics2D.OverlapCircleAll(position, explosion.transform.localScale.x / 20.0f);
+            foreach (Collider2D other in others) {
+                if (other.tag == "EnemyMissile") {
+                    EventManager.instance.QueueEvent(new MissileExploded(other.transform.position));
+                    Destroy(other.gameObject);
+                }
+            }
+            yield return null;
+        }
     }
 
     public bool OnStationDestroyed(IEvent evt) {
@@ -86,20 +120,27 @@ public class GameManager : MonoBehaviour, IEventListener {
         return target;
     }
 
+    void SpawnMissile() {
+        missilesSpawned++;
+        float deg = Random.Range(0f, 360f);
+        float rad = Mathf.Deg2Rad * deg;
+        float x = spawnDistance * Mathf.Cos(rad);
+        float y = spawnDistance * Mathf.Sin(rad);
+        Vector3 location = new Vector3(x, y, -1f);
+        GameObject newMissile = Instantiate(enemyMissilePrefab, location, Quaternion.identity) as GameObject;
+
+        Transform target = GetClosestStation(location);
+
+        newMissile.GetComponent<EnemyMissile>().target = target;
+    }
+
     IEnumerator SpawnMissiles() {
         while (true) {
-            missilesSpawned++;
-            float deg = Random.Range(0f, 360f);
-            float rad = Mathf.Deg2Rad * deg;
-            float x = spawnDistance * Mathf.Cos(rad);
-            float y = spawnDistance * Mathf.Sin(rad);
-            Vector3 location = new Vector3(x, y, -1f);
-            GameObject newMissile = Instantiate(enemyMissilePrefab, location, Quaternion.identity) as GameObject;
-
-            Transform target = GetClosestStation(location);
-
-            newMissile.GetComponent<EnemyMissile>().target = target;
-            yield return new WaitForSeconds(3f);
+            int numMissiles = 4;
+            for (int i = 0; i < numMissiles; i++) {
+                SpawnMissile();
+            }
+            yield return new WaitForSeconds(5f);
         }
     }
 }

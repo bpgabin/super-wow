@@ -10,15 +10,44 @@ public class EnemyMissile : MonoBehaviour {
     public Transform target;
     public float speed;
 
+    private Vector3 targetPos;
+    private float startDistance;
+
 	// Use this for initialization
 	void Start () {
-        Vector3 direction3 = target.position - transform.position;
-        Vector2 direction2 = new Vector2(direction3.x, direction3.y).normalized;
-        rigidbody2D.velocity = direction2 * speed;
+        targetPos = target.position;
 
-        float angle = Mathf.Atan2(direction2.y, direction2.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        float angleOffset = Random.Range(-90, 90);
+        float radOffset = angleOffset * Mathf.Deg2Rad;
+
+        Vector3 startDirection = target.position - transform.position;
+        startDistance = startDirection.magnitude;
+        float angle = Mathf.Atan2(startDirection.y, startDirection.x);
+        float finalAngle = angle + radOffset;
+
+        float xSpeed = speed * Mathf.Cos(finalAngle);
+        float ySpeed = speed * Mathf.Sin(finalAngle);
+
+        rigidbody2D.velocity = new Vector2(xSpeed, ySpeed);
 	}
+
+    void FixedUpdate() {
+        SteerTowardsTarget();
+    }
+
+    void SteerTowardsTarget() {
+        Vector3 diffVector = targetPos - transform.position;
+        Vector3 direction = diffVector.normalized;
+        float distance = diffVector.magnitude;
+        float turnAmount = 5f * (startDistance / (distance * 3.0f));
+        rigidbody2D.AddForce(direction * turnAmount);
+        Vector2 clampedVelocity = rigidbody2D.velocity.normalized;
+        clampedVelocity *= speed;
+        rigidbody2D.velocity = clampedVelocity;
+
+        float angle = Mathf.Atan2(direction.y, direction.x);
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
+    }
 
     void OnCollisionEnter2D(Collision2D other) {
         if (other.gameObject.tag == "Station") {

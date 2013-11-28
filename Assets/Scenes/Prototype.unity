@@ -286,16 +286,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionCamera: {fileID: 1906730197}
-  spawnDistance: 15
+  spawnDistance: 10
   outMissile: {fileID: 100000, guid: 6306999907643c34a9c910661e7492b3, type: 2}
   targetPrefab: {fileID: 100000, guid: 1696bd0f48ddafd439cd9287b4beedf4, type: 2}
   enemyMissilePrefab: {fileID: 100000, guid: 9db604098539f7f48aa6ad553ab34632, type: 2}
   explosionPrefab: {fileID: 100000, guid: c2542eb155f074fb7a4d3df66ac0673b, type: 2}
   stations:
   - {fileID: 1721856725}
-  - {fileID: 2093571985}
-  - {fileID: 1781799776}
   - {fileID: 391965417}
+  - {fileID: 1781799776}
+  - {fileID: 2093571985}
 --- !u!1 &896480099
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,6 +461,10 @@ Prefab:
     - target: {fileID: 2000000, guid: b84f8dc5be820224bb77d2e85052c772, type: 2}
       propertyPath: m_CullingMask.m_Bits
       value: 4294965247
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: b84f8dc5be820224bb77d2e85052c772, type: 2}
+      propertyPath: orthographic size
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b84f8dc5be820224bb77d2e85052c772, type: 2}
