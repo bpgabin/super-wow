@@ -37,7 +37,7 @@ public class OutMissile : MonoBehaviour {
         clampedVelocity *= speed;
         rigidbody2D.velocity = clampedVelocity;
 
-        float angle = Mathf.Atan2(direction.y, direction.x);
+        float angle = Mathf.Atan2(rigidbody2D.velocity.y, rigidbody2D.velocity.x);
         transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
     }
 

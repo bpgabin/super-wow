@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 
     private int missilesSpawned = 1;
     private int m_score = 0;
+    private int m_round = 1;
 
     private static GameManager s_instance = null;
 
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour, IEventListener {
     }
 
     public int score { get { return m_score; } }
+    public int round { get { return m_round; } }
 
     void Start() {
         s_instance = this;
@@ -39,7 +41,10 @@ public class GameManager : MonoBehaviour, IEventListener {
         EventManager.instance.AddListener(this, "MissileExploded", OnMissileExploded);
 
         // Begin Infinite Missile Spawner
-        StartCoroutine("SpawnMissiles");
+        //StartCoroutine("SpawnMissiles");
+
+        // Begin Round System
+        StartCoroutine("GameRound");
 
         GameObject go = new GameObject("GUISystem");
         go.AddComponent<GUISystem>();
@@ -132,6 +137,17 @@ public class GameManager : MonoBehaviour, IEventListener {
         Transform target = GetClosestStation(location);
 
         newMissile.GetComponent<EnemyMissile>().target = target;
+    }
+
+    IEnumerator GameRound() {
+        int numWaves = 2;
+        int missilesPerWave = 4;
+        for (int i = 0; i < numWaves; i++) {
+            for (int j = 0; j < missilesPerWave; j++) {
+                SpawnMissile();
+            }
+            yield return new WaitForSeconds(4f);
+        }
     }
 
     IEnumerator SpawnMissiles() {

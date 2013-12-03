@@ -28,5 +28,6 @@ public class GUISystem : MonoBehaviour {
 
     void TestGUI(){
         GUILayout.Label("Score: " + GameManager.instance.score);
+        GUILayout.Label("")
     }
 }

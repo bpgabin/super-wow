@@ -86,7 +86,7 @@ GameObject:
   - 23: {fileID: 153376063}
   - 114: {fileID: 153376067}
   - 58: {fileID: 153376064}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Earth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292,8 +292,8 @@ MonoBehaviour:
   enemyMissilePrefab: {fileID: 100000, guid: 9db604098539f7f48aa6ad553ab34632, type: 2}
   explosionPrefab: {fileID: 100000, guid: c2542eb155f074fb7a4d3df66ac0673b, type: 2}
   stations:
-  - {fileID: 1721856725}
   - {fileID: 391965417}
+  - {fileID: 1721856725}
   - {fileID: 1781799776}
   - {fileID: 2093571985}
 --- !u!1 &896480099
@@ -306,7 +306,7 @@ GameObject:
   - 4: {fileID: 896480101}
   - 108: {fileID: 896480100}
   - 114: {fileID: 896480102}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -771,7 +771,7 @@ GameObject:
   - 135: {fileID: 1786801968}
   - 23: {fileID: 1786801967}
   - 114: {fileID: 1786801966}
-  m_Layer: 1
+  m_Layer: 12
   m_Name: Clouds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
