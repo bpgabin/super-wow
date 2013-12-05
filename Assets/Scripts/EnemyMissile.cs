@@ -29,6 +29,8 @@ public class EnemyMissile : MonoBehaviour {
         float ySpeed = speed * Mathf.Sin(finalAngle);
 
         rigidbody2D.velocity = new Vector2(xSpeed, ySpeed);
+
+        speed += GameManager.instance.round / 4.0f;
 	}
 
     void FixedUpdate() {
@@ -39,13 +41,13 @@ public class EnemyMissile : MonoBehaviour {
         Vector3 diffVector = targetPos - transform.position;
         Vector3 direction = diffVector.normalized;
         float distance = diffVector.magnitude;
-        float turnAmount = 5f * (startDistance / (distance * 3.0f));
+        float turnAmount = 5f * (GameManager.instance.round / 4.0f) * (startDistance / (distance * 3.0f));
         rigidbody2D.AddForce(direction * turnAmount);
         Vector2 clampedVelocity = rigidbody2D.velocity.normalized;
         clampedVelocity *= speed;
         rigidbody2D.velocity = clampedVelocity;
 
-        float angle = Mathf.Atan2(direction.y, direction.x);
+        float angle = Mathf.Atan2(rigidbody2D.velocity.y, rigidbody2D.velocity.x);
         transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
     }
 

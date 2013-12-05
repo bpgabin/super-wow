@@ -2,6 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public class GameOver : BaseEvent {
+
+}
+
 public class GameManager : MonoBehaviour, IEventListener {
 
     public Camera explosionCamera;
@@ -10,12 +14,16 @@ public class GameManager : MonoBehaviour, IEventListener {
     public GameObject targetPrefab;
     public GameObject enemyMissilePrefab;
     public GameObject explosionPrefab;
+    public LayerMask earthMask;
 
     public List<Transform> stations;
 
     private int missilesSpawned = 1;
     private int m_score = 0;
-    private int m_round = 1;
+    private int m_round = 0;
+
+    private bool roundSpawnDone = true;
+    private bool gameRunning = true;
 
     private static GameManager s_instance = null;
 
@@ -32,6 +40,7 @@ public class GameManager : MonoBehaviour, IEventListener {
     public int round { get { return m_round; } }
 
     void Start() {
+        Time.timeScale = 1f;
         s_instance = this;
 
         Holoville.HOTween.HOTween.Init();
@@ -43,9 +52,6 @@ public class GameManager : MonoBehaviour, IEventListener {
         // Begin Infinite Missile Spawner
         //StartCoroutine("SpawnMissiles");
 
-        // Begin Round System
-        StartCoroutine("GameRound");
-
         GameObject go = new GameObject("GUISystem");
         go.AddComponent<GUISystem>();
     }
@@ -53,7 +59,6 @@ public class GameManager : MonoBehaviour, IEventListener {
     public bool HandleEvent(IEvent evt) { return true; }
 
     public bool OnMissileExploded(IEvent evt) {
-        m_score += 50;
         MissileExploded explosionEvent = evt as MissileExploded;
         Vector3 screenLocation = Camera.main.WorldToScreenPoint(explosionEvent.position);
         Vector3 newWorldLocation = explosionCamera.ScreenToWorldPoint(screenLocation);
@@ -70,6 +75,16 @@ public class GameManager : MonoBehaviour, IEventListener {
                 if (other.tag == "EnemyMissile") {
                     EventManager.instance.QueueEvent(new MissileExploded(other.transform.position));
                     Destroy(other.gameObject);
+                    // Temporary Score
+                    if (m_round < 2) {
+                        m_score += 50;
+                    }
+                    else if (m_round < 4) {
+                        m_score += 100;
+                    }
+                    else {
+                        m_score += 150;
+                    }
                 }
             }
             yield return null;
@@ -83,7 +98,9 @@ public class GameManager : MonoBehaviour, IEventListener {
             }
         }
         if (stations.Count == 0) {
-            Application.LoadLevel("Prototype");
+            gameRunning = false;
+            Time.timeScale = 0f;
+            EventManager.instance.QueueEvent(new GameOver());
         }
         return true;
     }
@@ -91,7 +108,19 @@ public class GameManager : MonoBehaviour, IEventListener {
     void Update() {
         // User Missile Launching
         if (Input.GetMouseButtonDown(0)) {
-            LaunchMissile();
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit info;
+            if (!Physics.Raycast(ray, out info, earthMask)) {
+                LaunchMissile();
+            }
+        }
+
+        if (roundSpawnDone && gameRunning) {
+            GameObject missileCheck = GameObject.FindGameObjectWithTag("EnemyMissile");
+            if (!missileCheck) {
+                m_round++;
+                StartCoroutine("GameRound");
+            }
         }
     }
 
@@ -140,14 +169,16 @@ public class GameManager : MonoBehaviour, IEventListener {
     }
 
     IEnumerator GameRound() {
-        int numWaves = 2;
-        int missilesPerWave = 4;
+        roundSpawnDone = false;
+        int numWaves = m_round;
+        int missilesPerWave = 4 + m_round;
         for (int i = 0; i < numWaves; i++) {
             for (int j = 0; j < missilesPerWave; j++) {
                 SpawnMissile();
             }
-            yield return new WaitForSeconds(4f);
+            if(i < numWaves - 1) yield return new WaitForSeconds(4f);
         }
+        roundSpawnDone = true;
     }
 
     IEnumerator SpawnMissiles() {

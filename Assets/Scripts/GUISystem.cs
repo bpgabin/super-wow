@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GUISystem : MonoBehaviour {
+public class GUISystem : MonoBehaviour, IEventListener {
 
     private static GUISystem s_instance = null;
 
@@ -18,16 +18,32 @@ public class GUISystem : MonoBehaviour {
     private delegate void GUIFunction();
     private GUIFunction currentGUI;
 
+    public bool HandleEvent(IEvent evt) { return false; }
+
     void Start(){
+        EventManager.instance.AddListener(this, "GameOver", OnGameOver);
+
         currentGUI = TestGUI;
+    }
+
+    public bool OnGameOver(IEvent evt) {
+        currentGUI = GameOverGUI;
+        return true;
     }
 
     void OnGUI(){
         currentGUI();
     }
 
+    void GameOverGUI() {
+        GUILayout.Box("GAME OVER\n\n\nScore: " + GameManager.instance.score + "\nRound: " + GameManager.instance.round);
+        if (GUILayout.Button("Restart")) {
+            Application.LoadLevel("Prototype");
+        }
+    }
+
     void TestGUI(){
         GUILayout.Label("Score: " + GameManager.instance.score);
-        GUILayout.Label("")
+        GUILayout.Label("Stage: " + GameManager.instance.round);
     }
 }

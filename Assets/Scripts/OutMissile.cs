@@ -31,7 +31,7 @@ public class OutMissile : MonoBehaviour {
         Vector3 direction = diffVector.normalized;
         float distance = diffVector.magnitude;
         if (distance < closestDistance) closestDistance = distance;
-        float turnAmount = 30f * (startDistance / (closestDistance * 3.0f));
+        float turnAmount = 30f * Mathf.Pow((startDistance / (closestDistance * 3.0f)), 0.25f);
         rigidbody2D.AddForce(direction * turnAmount);
         Vector2 clampedVelocity = rigidbody2D.velocity.normalized;
         clampedVelocity *= speed;
