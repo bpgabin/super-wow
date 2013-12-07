@@ -115,6 +115,14 @@ public class GameManager : MonoBehaviour, IEventListener {
             }
         }
 
+		if (Input.GetKey ("space")) {
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit info;
+			if (!Physics.Raycast(ray, out info, earthMask)) {
+				LaunchMissile();
+			}	
+		}
+
         if (roundSpawnDone && gameRunning) {
             GameObject missileCheck = GameObject.FindGameObjectWithTag("EnemyMissile");
             if (!missileCheck) {

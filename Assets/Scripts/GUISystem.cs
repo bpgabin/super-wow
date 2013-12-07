@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Holoville.HOTween;
 
 public class GUISystem : MonoBehaviour, IEventListener {
 
@@ -39,7 +40,8 @@ public class GUISystem : MonoBehaviour, IEventListener {
         GUILayout.Box("GAME OVER\n\n\nScore: " + GameManager.instance.score + "\nRound: " + GameManager.instance.round);
         if (GUILayout.Button("Restart")) {
             Application.LoadLevel("Prototype");
-        }
+			HOTween.Kill();
+	        }
     }
 
     void TestGUI(){
