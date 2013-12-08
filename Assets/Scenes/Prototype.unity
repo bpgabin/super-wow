@@ -233,7 +233,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_SortingLayerID: 45526687
-  m_Sprite: {fileID: 21300000, guid: 5cf87035a8ed2bb45a13f2df0560fec6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d3d970765008d4a29876cdec3c0720d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!68 &391965419
 EdgeCollider2D:
@@ -294,6 +294,10 @@ MonoBehaviour:
   earthMask:
     serializedVersion: 2
     m_Bits: 4096
+  station_Q: {fileID: 1721856723}
+  station_E: {fileID: 1781799774}
+  station_A: {fileID: 2093571983}
+  station_D: {fileID: 391965416}
   stations:
   - {fileID: 391965417}
   - {fileID: 1721856725}
@@ -672,7 +676,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_SortingLayerID: 45526687
-  m_Sprite: {fileID: 21300000, guid: 5cf87035a8ed2bb45a13f2df0560fec6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d3d970765008d4a29876cdec3c0720d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1721856725
 Transform:
@@ -736,7 +740,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_SortingLayerID: 45526687
-  m_Sprite: {fileID: 21300000, guid: 5cf87035a8ed2bb45a13f2df0560fec6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d3d970765008d4a29876cdec3c0720d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1781799776
 Transform:
@@ -938,7 +942,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_SortingLayerID: 45526687
-  m_Sprite: {fileID: 21300000, guid: 5cf87035a8ed2bb45a13f2df0560fec6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d3d970765008d4a29876cdec3c0720d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &2093571985
 Transform:

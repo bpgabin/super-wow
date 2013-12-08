@@ -16,6 +16,12 @@ public class GameManager : MonoBehaviour, IEventListener {
     public GameObject explosionPrefab;
     public LayerMask earthMask;
 
+	// Peter being a lazy ass. STATIONS!
+	public GameObject station_Q;
+	public GameObject station_E;
+	public GameObject station_A;
+	public GameObject station_D;
+
     public List<Transform> stations;
 
     private int missilesSpawned = 1;
@@ -111,15 +117,49 @@ public class GameManager : MonoBehaviour, IEventListener {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit info;
             if (!Physics.Raycast(ray, out info, earthMask)) {
-                LaunchMissile();
+                LaunchConvenientMissile();
             }
         }
+
+
 
 		if (Input.GetKey ("space")) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit info;
 			if (!Physics.Raycast(ray, out info, earthMask)) {
-				LaunchMissile();
+				LaunchConvenientMissile();
+			}	
+		}
+
+		if (Input.GetKeyDown ("q")) {
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit info;
+			if (!Physics.Raycast(ray, out info, earthMask)) {
+				LaunchMissile(station_Q);
+			}	
+		}
+
+		if (Input.GetKeyDown ("e")) {
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit info;
+			if (!Physics.Raycast(ray, out info, earthMask)) {
+				LaunchMissile(station_E);
+			}	
+		}
+
+		if (Input.GetKeyDown ("a")) {
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit info;
+			if (!Physics.Raycast(ray, out info, earthMask)) {
+				LaunchMissile(station_A);
+			}	
+		}
+
+		if (Input.GetKeyDown ("d")) {
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit info;
+			if (!Physics.Raycast(ray, out info, earthMask)) {
+				LaunchMissile(station_D);
 			}	
 		}
 
@@ -132,7 +172,7 @@ public class GameManager : MonoBehaviour, IEventListener {
         }
     }
 
-    void LaunchMissile() {
+    void LaunchConvenientMissile() {
         Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 targetLocation = new Vector3(target.x, target.y, -1f);
 
@@ -148,6 +188,22 @@ public class GameManager : MonoBehaviour, IEventListener {
 
         missileScript.target = targetObject;
     }
+
+	void LaunchMissile(GameObject launcher) {
+		Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Vector3 targetLocation = new Vector3(target.x, target.y, -1f);
+		
+		Transform launchLocation = launcher.transform.GetChild(0).transform;
+		
+		Vector3 launchPos = new Vector3(launchLocation.position.x, launchLocation.position.y, -1f);
+		
+		GameObject targetObject = Instantiate(targetPrefab, targetLocation, Quaternion.identity) as GameObject;
+		GameObject newMissile = Instantiate(outMissile, launchPos, Quaternion.identity) as GameObject;
+		
+		OutMissile missileScript = newMissile.GetComponent<OutMissile>();
+
+		missileScript.target = targetObject;
+	}
 
     Transform GetClosestStation(Vector3 location) {
         float closestDistance = Mathf.Infinity;
