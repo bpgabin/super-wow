@@ -33,6 +33,7 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
 	
 	// Update is called once per frame
 	void Update () {
+
 	}
 
     // We need to have a queue for the sounds

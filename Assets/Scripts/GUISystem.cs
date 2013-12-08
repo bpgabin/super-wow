@@ -58,11 +58,6 @@ public class GUISystem : MonoBehaviour, IEventListener {
     }
 
     void MainMenuGUI() {
-        GUILayout.BeginArea(new Rect(20, Screen.height / 2.0f - 50, 100, 100));
-        if (GUILayout.Button("Start Game")) {
-            Application.LoadLevel("Prototype");
-        }
-        GUILayout.EndArea();
     }
 
     void PausedGUI() {
