@@ -5,6 +5,10 @@ public class StationDestroyed : BaseEvent {
 
 }
 
+public class EarthHit : BaseEvent {
+
+}
+
 public class EnemyMissile : MonoBehaviour {
 
     public Transform target;
@@ -34,7 +38,14 @@ public class EnemyMissile : MonoBehaviour {
 	}
 
     void FixedUpdate() {
-        SteerTowardsTarget();
+        if (target != null) {
+            SteerTowardsTarget();
+        }
+        else {
+            target = GameObject.FindGameObjectWithTag("Earth").transform;
+            targetPos = target.position;
+            SteerTowardsTarget();
+        }
     }
 
     void SteerTowardsTarget() {
@@ -47,6 +58,7 @@ public class EnemyMissile : MonoBehaviour {
         clampedVelocity *= speed;
         rigidbody2D.velocity = clampedVelocity;
 
+        //float angle = Mathf.Atan2(direction.y, direction.x);
         float angle = Mathf.Atan2(rigidbody2D.velocity.y, rigidbody2D.velocity.x);
         transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle * Mathf.Rad2Deg));
     }
@@ -55,6 +67,9 @@ public class EnemyMissile : MonoBehaviour {
         if (other.gameObject.tag == "Station") {
             EventManager.instance.QueueEvent(new StationDestroyed());
             Destroy(other.gameObject);
+        }
+        else if (other.gameObject.tag == "Earth") {
+            EventManager.instance.QueueEvent(new EarthHit());
         }
         Destroy(gameObject);
     }

@@ -47,5 +47,6 @@ public class GUISystem : MonoBehaviour, IEventListener {
     void TestGUI(){
         GUILayout.Label("Score: " + GameManager.instance.score);
         GUILayout.Label("Stage: " + GameManager.instance.round);
+        GUILayout.Label("EarthHP: " + GameManager.instance.earthHP);
     }
 }

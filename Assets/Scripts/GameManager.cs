@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour, IEventListener {
     private int missilesSpawned = 1;
     private int m_score = 0;
     private int m_round = 0;
+    private int m_earthHP = 6;
 
     private bool roundSpawnDone = true;
     private bool gameRunning = true;
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 
     public int score { get { return m_score; } }
     public int round { get { return m_round; } }
+    public int earthHP { get { return m_earthHP; } }
 
     void Start() {
         Time.timeScale = 1f;
@@ -54,6 +56,7 @@ public class GameManager : MonoBehaviour, IEventListener {
         // Register for Events
         EventManager.instance.AddListener(this, "StationDestroyed", OnStationDestroyed);
         EventManager.instance.AddListener(this, "MissileExploded", OnMissileExploded);
+        EventManager.instance.AddListener(this, "EarthHit", OnEarthHit);
 
         // Begin Infinite Missile Spawner
         //StartCoroutine("SpawnMissiles");
@@ -103,7 +106,12 @@ public class GameManager : MonoBehaviour, IEventListener {
                 stations.RemoveAt(i);
             }
         }
-        if (stations.Count == 0) {
+        return true;
+    }
+
+    public bool OnEarthHit(IEvent evt) {
+        m_earthHP--;
+        if (m_earthHP <= 0) {
             gameRunning = false;
             Time.timeScale = 0f;
             EventManager.instance.QueueEvent(new GameOver());
@@ -123,7 +131,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 
 
 
-		if (Input.GetKey ("space")) {
+		if (Input.GetKey (KeyCode.Space)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit info;
 			if (!Physics.Raycast(ray, out info, earthMask)) {
@@ -131,7 +139,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 			}	
 		}
 
-		if (Input.GetKeyDown ("q")) {
+		if (Input.GetKeyDown (KeyCode.Q)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit info;
 			if (!Physics.Raycast(ray, out info, earthMask)) {
@@ -139,7 +147,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 			}	
 		}
 
-		if (Input.GetKeyDown ("e")) {
+		if (Input.GetKeyDown (KeyCode.E)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit info;
 			if (!Physics.Raycast(ray, out info, earthMask)) {
@@ -147,7 +155,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 			}	
 		}
 
-		if (Input.GetKeyDown ("a")) {
+		if (Input.GetKeyDown (KeyCode.A)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit info;
 			if (!Physics.Raycast(ray, out info, earthMask)) {
@@ -155,7 +163,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 			}	
 		}
 
-		if (Input.GetKeyDown ("d")) {
+		if (Input.GetKeyDown (KeyCode.D)) {
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit info;
 			if (!Physics.Raycast(ray, out info, earthMask)) {
@@ -177,32 +185,42 @@ public class GameManager : MonoBehaviour, IEventListener {
         Vector3 targetLocation = new Vector3(target.x, target.y, -1f);
 
         Transform closestStation = GetClosestStation(targetLocation);
-        Transform launchLocation = closestStation.GetChild(0).transform;
+        if (closestStation != null) {
+            StationScript closestStationSript = closestStation.GetComponent<StationScript>();
+            closestStationSript.OnStationFired();
 
-        Vector3 launchPos = new Vector3(launchLocation.position.x, launchLocation.position.y, -1f);
+            Transform launchLocation = closestStation.GetChild(0).transform;
 
-        GameObject targetObject = Instantiate(targetPrefab, targetLocation, Quaternion.identity) as GameObject;
-        GameObject newMissile = Instantiate(outMissile, launchPos, Quaternion.identity) as GameObject;
+            Vector3 launchPos = new Vector3(launchLocation.position.x, launchLocation.position.y, -1f);
 
-        OutMissile missileScript = newMissile.GetComponent<OutMissile>();
+            GameObject targetObject = Instantiate(targetPrefab, targetLocation, Quaternion.identity) as GameObject;
+            GameObject newMissile = Instantiate(outMissile, launchPos, Quaternion.identity) as GameObject;
 
-        missileScript.target = targetObject;
+            OutMissile missileScript = newMissile.GetComponent<OutMissile>();
+
+            missileScript.target = targetObject;
+        }
     }
 
-	void LaunchMissile(GameObject launcher) {
+	void LaunchMissile(GameObject station) {
 		Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Vector3 targetLocation = new Vector3(target.x, target.y, -1f);
-		
-		Transform launchLocation = launcher.transform.GetChild(0).transform;
-		
-		Vector3 launchPos = new Vector3(launchLocation.position.x, launchLocation.position.y, -1f);
-		
-		GameObject targetObject = Instantiate(targetPrefab, targetLocation, Quaternion.identity) as GameObject;
-		GameObject newMissile = Instantiate(outMissile, launchPos, Quaternion.identity) as GameObject;
-		
-		OutMissile missileScript = newMissile.GetComponent<OutMissile>();
 
-		missileScript.target = targetObject;
+        StationScript stationScript = station.GetComponent<StationScript>();
+        if (stationScript.ammo > 0) {
+            stationScript.OnStationFired();
+
+            Transform launchLocation = station.transform.GetChild(0).transform;
+
+            Vector3 launchPos = new Vector3(launchLocation.position.x, launchLocation.position.y, -1f);
+
+            GameObject targetObject = Instantiate(targetPrefab, targetLocation, Quaternion.identity) as GameObject;
+            GameObject newMissile = Instantiate(outMissile, launchPos, Quaternion.identity) as GameObject;
+
+            OutMissile missileScript = newMissile.GetComponent<OutMissile>();
+
+            missileScript.target = targetObject;
+        }
 	}
 
     Transform GetClosestStation(Vector3 location) {
@@ -211,8 +229,10 @@ public class GameManager : MonoBehaviour, IEventListener {
         foreach (Transform station in stations) {
             Vector3 distance = station.position - location;
             if (distance.magnitude < closestDistance) {
-                closestDistance = distance.magnitude;
-                target = station;
+                if (station.GetComponent<StationScript>().ammo > 0) {
+                    closestDistance = distance.magnitude;
+                    target = station;
+                }
             }
         }
         return target;
