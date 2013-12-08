@@ -38,14 +38,13 @@ public class EnemyMissile : MonoBehaviour {
 	}
 
     void FixedUpdate() {
-        if (target != null) {
-            SteerTowardsTarget();
+        if (target.gameObject.tag == "Station") {
+            if (target.gameObject.GetComponent<StationScript>().destroyed) {
+                target = GameObject.FindGameObjectWithTag("Earth").transform;
+                targetPos = target.position;
+            }
         }
-        else {
-            target = GameObject.FindGameObjectWithTag("Earth").transform;
-            targetPos = target.position;
-            SteerTowardsTarget();
-        }
+        SteerTowardsTarget();
     }
 
     void SteerTowardsTarget() {
@@ -66,7 +65,7 @@ public class EnemyMissile : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D other) {
         if (other.gameObject.tag == "Station") {
             EventManager.instance.QueueEvent(new StationDestroyed());
-            Destroy(other.gameObject);
+            other.gameObject.GetComponent<StationScript>().DisableStation();
         }
         else if (other.gameObject.tag == "Earth") {
             EventManager.instance.QueueEvent(new EarthHit());

@@ -2,9 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameOver : BaseEvent {
+public class GameOver : BaseEvent { }
 
-}
+public class GameLoaded : BaseEvent { }
+
+public class GamePaused : BaseEvent { }
+
+public class GameUnPaused : BaseEvent { }
 
 public class GameManager : MonoBehaviour, IEventListener {
 
@@ -14,6 +18,7 @@ public class GameManager : MonoBehaviour, IEventListener {
     public GameObject targetPrefab;
     public GameObject enemyMissilePrefab;
     public GameObject explosionPrefab;
+    public Transform earthTransform;
     public LayerMask earthMask;
 
 	// Peter being a lazy ass. STATIONS!
@@ -31,6 +36,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 
     private bool roundSpawnDone = true;
     private bool gameRunning = true;
+    private bool paused = false;
 
     private static GameManager s_instance = null;
 
@@ -47,7 +53,7 @@ public class GameManager : MonoBehaviour, IEventListener {
     public int round { get { return m_round; } }
     public int earthHP { get { return m_earthHP; } }
 
-    void Start() {
+    void Awake() {
         Time.timeScale = 1f;
         s_instance = this;
 
@@ -58,11 +64,8 @@ public class GameManager : MonoBehaviour, IEventListener {
         EventManager.instance.AddListener(this, "MissileExploded", OnMissileExploded);
         EventManager.instance.AddListener(this, "EarthHit", OnEarthHit);
 
-        // Begin Infinite Missile Spawner
-        //StartCoroutine("SpawnMissiles");
-
-        GameObject go = new GameObject("GUISystem");
-        go.AddComponent<GUISystem>();
+        GUISystem.instance.OnGameLoaded();
+        BeginNewRound();
     }
 
     public bool HandleEvent(IEvent evt) { return true; }
@@ -85,27 +88,41 @@ public class GameManager : MonoBehaviour, IEventListener {
                     EventManager.instance.QueueEvent(new MissileExploded(other.transform.position));
                     Destroy(other.gameObject);
                     // Temporary Score
-                    if (m_round < 2) {
-                        m_score += 50;
+                    int baseScore = 25;
+                    if (m_round < 3) {
+                        m_score += baseScore * 1;
                     }
-                    else if (m_round < 4) {
-                        m_score += 100;
+                    else if (m_round < 5) {
+                        m_score += baseScore * 2;
                     }
-                    else {
-                        m_score += 150;
+                    else if(m_round < 7) {
+                        m_score += baseScore * 3;
                     }
+                    else if (m_round < 9) {
+                        m_score += baseScore * 4;
+                    }
+                    else if (m_round < 11) {
+                        m_score += baseScore * 5;
+                    }
+                    else
+                        m_score += baseScore * 6;
                 }
             }
             yield return null;
         }
     }
 
+    public void OnGamePaused() {
+        Time.timeScale = 0f;
+        paused = true;
+    }
+
+    public void OnGameUnPaused() {
+        Time.timeScale = 1f;
+        paused = false;
+    }
+
     public bool OnStationDestroyed(IEvent evt) {
-        for (int i = 0; i < stations.Count; i++) {
-            if (stations[i] == null) {
-                stations.RemoveAt(i);
-            }
-        }
         return true;
     }
 
@@ -114,70 +131,94 @@ public class GameManager : MonoBehaviour, IEventListener {
         if (m_earthHP <= 0) {
             gameRunning = false;
             Time.timeScale = 0f;
+            paused = true;
             EventManager.instance.QueueEvent(new GameOver());
         }
         return true;
     }
 
     void Update() {
-        // User Missile Launching
-        if (Input.GetMouseButtonDown(0)) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit info;
-            if (!Physics.Raycast(ray, out info, earthMask)) {
-                LaunchConvenientMissile();
+        // User Pause Options
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (!paused) {
+                GUISystem.instance.OnGamePaused();
+                OnGamePaused();
+            }
+            else {
+                GUISystem.instance.OnGameUnPaused();
+                OnGameUnPaused();
             }
         }
 
-
-
-		if (Input.GetKey (KeyCode.Space)) {
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit info;
-			if (!Physics.Raycast(ray, out info, earthMask)) {
-				LaunchConvenientMissile();
-			}	
-		}
-
-		if (Input.GetKeyDown (KeyCode.Q)) {
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit info;
-			if (!Physics.Raycast(ray, out info, earthMask)) {
-				LaunchMissile(station_Q);
-			}	
-		}
-
-		if (Input.GetKeyDown (KeyCode.E)) {
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit info;
-			if (!Physics.Raycast(ray, out info, earthMask)) {
-				LaunchMissile(station_E);
-			}	
-		}
-
-		if (Input.GetKeyDown (KeyCode.A)) {
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit info;
-			if (!Physics.Raycast(ray, out info, earthMask)) {
-				LaunchMissile(station_A);
-			}	
-		}
-
-		if (Input.GetKeyDown (KeyCode.D)) {
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit info;
-			if (!Physics.Raycast(ray, out info, earthMask)) {
-				LaunchMissile(station_D);
-			}	
-		}
-
-        if (roundSpawnDone && gameRunning) {
+        if (!paused) {
             GameObject missileCheck = GameObject.FindGameObjectWithTag("EnemyMissile");
-            if (!missileCheck) {
-                m_round++;
-                StartCoroutine("GameRound");
+            if (!roundSpawnDone || missileCheck) {
+
+                // User Missile Launching
+                if (Input.GetMouseButtonDown(0)) {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
+                    if (hit.collider == null) {
+                        LaunchConvenientMissile();
+                    }
+                }
+
+
+
+                if (Input.GetKey(KeyCode.Space)) {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
+                    if (hit.collider == null) {
+                        LaunchConvenientMissile();
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.Q)) {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
+                    if (hit.collider == null) {
+                        LaunchMissile(station_Q);
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.E)) {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
+                    if (hit.collider == null) {
+                        LaunchMissile(station_E);
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.A)) {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
+                    if (hit.collider == null) {
+                        LaunchMissile(station_A);
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.D)) {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
+                    if (hit.collider == null) {
+                        LaunchMissile(station_D);
+                    }
+                }
+            }
+
+            if (roundSpawnDone && gameRunning) {
+                GameObject ourMissileCheck = GameObject.FindGameObjectWithTag("OurMissile");
+                GameObject explosionCheck = GameObject.FindGameObjectWithTag("Explosion");
+                if (!missileCheck && !ourMissileCheck && !explosionCheck) {
+                    paused = true;
+                    GUISystem.instance.OnRoundOver();
+                    Time.timeScale = 0f;
+                }
             }
         }
+    }
+
+    public void BeginNewRound() {
+        Holoville.HOTween.HOTween.Kill();
+        m_round++;
+        Time.timeScale = 1.0f;
+        ResetStations();
+        paused = false;
+        StartCoroutine("GameRound");
     }
 
     void LaunchConvenientMissile() {
@@ -240,22 +281,42 @@ public class GameManager : MonoBehaviour, IEventListener {
 
     void SpawnMissile() {
         missilesSpawned++;
-        float deg = Random.Range(0f, 360f);
+        float deg;
+        int randNumSide = Random.Range(0, 4);
+        if (randNumSide == 0)
+            deg = Random.Range(0f, 50f);
+        else if (randNumSide == 1)
+            deg = Random.Range(130f, 180f);
+        else if (randNumSide == 2)
+            deg = Random.Range(180f, 230f);
+        else
+            deg = Random.Range(310f, 360f);
         float rad = Mathf.Deg2Rad * deg;
         float x = spawnDistance * Mathf.Cos(rad);
         float y = spawnDistance * Mathf.Sin(rad);
         Vector3 location = new Vector3(x, y, -1f);
         GameObject newMissile = Instantiate(enemyMissilePrefab, location, Quaternion.identity) as GameObject;
 
-        Transform target = GetClosestStation(location);
+        Transform target;
+        int randNum = Random.Range(0, 2);
+        if(randNum == 0)
+            target = GetClosestStation(location);
+        else
+            target = earthTransform;
 
         newMissile.GetComponent<EnemyMissile>().target = target;
+    }
+
+    void ResetStations() {
+        foreach (Transform station in stations) {
+            station.gameObject.GetComponent<StationScript>().ResetStation();
+        }
     }
 
     IEnumerator GameRound() {
         roundSpawnDone = false;
         int numWaves = m_round;
-        int missilesPerWave = 4 + m_round;
+        int missilesPerWave = 4 + m_round/2;
         for (int i = 0; i < numWaves; i++) {
             for (int j = 0; j < missilesPerWave; j++) {
                 SpawnMissile();

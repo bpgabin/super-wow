@@ -24,7 +24,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 400002}
   - 212: {fileID: 21200000}
-  - 68: {fileID: 6800000}
   - 114: {fileID: 11400000}
   - 60: {fileID: 6000000}
   m_Layer: 10
@@ -206,18 +205,6 @@ PolygonCollider2D:
       - {x: -3.46499968, y: -5.38499975}
       - {x: -3.4199996, y: -5.44499969}
       - {x: -3.35999966, y: -5.44499969}
---- !u!68 &6800000
-EdgeCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
-  m_Enabled: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Points:
-  - {x: -3.90500045, y: 0}
-  - {x: 3.90500045, y: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -230,17 +217,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammoSprites:
-  - {fileID: 21300000, guid: c5c9e817b9593d040bcf0613ad159e50, type: 3}
-  - {fileID: 21300000, guid: ef06765343f0aba4896e7f6f186337c7, type: 3}
-  - {fileID: 21300000, guid: d5cef3bf0968eeb4f87d8c16c96fca2e, type: 3}
-  - {fileID: 21300000, guid: 7a6ab36bab6d4bf4fbda34ab0058d860, type: 3}
-  - {fileID: 21300000, guid: fb38bfca8038ba14fa5766fe8b4bc775, type: 3}
-  - {fileID: 21300000, guid: aaf87e1483b8d254abb8ebc3365d6069, type: 3}
-  - {fileID: 21300000, guid: 5a6a905a70720024dac63d7d44d04b2b, type: 3}
-  - {fileID: 21300000, guid: 356bb0b18406d9842911ea39c0ba9edb, type: 3}
-  - {fileID: 21300000, guid: 31a59b0b64e0dfc49a05fd23ba182b8a, type: 3}
-  - {fileID: 21300000, guid: e88a709d6bc4f2d49912576f5c587288, type: 3}
-  - {fileID: 21300000, guid: d3d970765008d4a29876cdec3c0720d4, type: 3}
+  - {fileID: 21300000, guid: 79ba4695275f7514098d9b07f98b220d, type: 3}
+  - {fileID: 21300000, guid: 3ae4e4ab49e26b242ab0b65fdc9cd04f, type: 3}
+  - {fileID: 21300000, guid: 1a81db44fa9caaa4594ed55e30130b93, type: 3}
+  - {fileID: 21300000, guid: 1bbfe0016912b0a42bb80f7ec4900b1c, type: 3}
+  - {fileID: 21300000, guid: a025183bc165d374e8c59200ff5acf1b, type: 3}
+  - {fileID: 21300000, guid: b271dd83e9952804b8ca493a3eb2a392, type: 3}
+  - {fileID: 21300000, guid: 5eb0591eaa495e448b3e6f7df7809cb4, type: 3}
+  - {fileID: 21300000, guid: e0bd19b16b084c54b84e8b5e54c4f11e, type: 3}
+  - {fileID: 21300000, guid: 7004b10d84586de44ac9b1798b0eeb6b, type: 3}
+  - {fileID: 21300000, guid: 18dc072912c2c7845a79a78f63ad8576, type: 3}
+  - {fileID: 21300000, guid: 317c4415df03ac042946bcfb8780f940, type: 3}
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -262,7 +249,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_SortingLayerID: 45526687
-  m_Sprite: {fileID: 21300000, guid: d3d970765008d4a29876cdec3c0720d4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 79ba4695275f7514098d9b07f98b220d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:
