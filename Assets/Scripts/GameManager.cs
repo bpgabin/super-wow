@@ -10,6 +10,12 @@ public class GamePaused : BaseEvent { }
 
 public class GameUnPaused : BaseEvent { }
 
+public class ScoreAmountEvent : BaseEvent { }
+
+public class GameRoundBegin : BaseEvent { }
+
+public class GameRoundEnd : BaseEvent { }
+
 public class GameManager : MonoBehaviour, IEventListener {
 
     public Camera explosionCamera;
@@ -37,8 +43,17 @@ public class GameManager : MonoBehaviour, IEventListener {
     private bool roundSpawnDone = true;
     private bool gameRunning = true;
     private bool paused = false;
+    public int scoreThreshold = 0;
 
     private static GameManager s_instance = null;
+
+    public int remainingMissiles() {
+        int ammoLeft = 0;
+        foreach (Transform station in stations) {
+            ammoLeft += station.gameObject.GetComponent<StationScript>().ammo;
+        }
+        return ammoLeft;
+    }
 
     public static GameManager instance {
         get {
@@ -60,11 +75,13 @@ public class GameManager : MonoBehaviour, IEventListener {
         Holoville.HOTween.HOTween.Init();
 
         // Register for Events
-        EventManager.instance.AddListener(this, "StationDestroyed", OnStationDestroyed);
-        EventManager.instance.AddListener(this, "MissileExploded", OnMissileExploded);
-        EventManager.instance.AddListener(this, "EarthHit", OnEarthHit);
+        EventManager.instance.AddListener(this, "MissileExploded", this.OnMissileExploded);
+        EventManager.instance.AddListener(this, "EarthHit", this.OnEarthHit);
 
         GUISystem.instance.OnGameLoaded();
+    }
+
+    void Start() {
         BeginNewRound();
     }
 
@@ -77,7 +94,7 @@ public class GameManager : MonoBehaviour, IEventListener {
         newWorldLocation.z = -1f;
         GameObject explosion = Instantiate(explosionPrefab, newWorldLocation, Quaternion.identity) as GameObject;
         StartCoroutine(MissileChecker(explosion, explosionEvent.position));
-        return true;
+        return false;
     }
 
     IEnumerator MissileChecker(GameObject explosion, Vector2 position) {
@@ -91,21 +108,37 @@ public class GameManager : MonoBehaviour, IEventListener {
                     int baseScore = 25;
                     if (m_round < 3) {
                         m_score += baseScore * 1;
+                        scoreThreshold += baseScore * 1;
                     }
                     else if (m_round < 5) {
                         m_score += baseScore * 2;
+                        scoreThreshold += baseScore * 2;
                     }
                     else if(m_round < 7) {
                         m_score += baseScore * 3;
+                        scoreThreshold += baseScore * 3;
                     }
                     else if (m_round < 9) {
                         m_score += baseScore * 4;
                     }
                     else if (m_round < 11) {
                         m_score += baseScore * 5;
+                        scoreThreshold += baseScore * 5;
                     }
-                    else
+                    else {
                         m_score += baseScore * 6;
+                        scoreThreshold += baseScore * 6;
+                    }
+
+                    /*
+                    if (scoreThreshold >= 3 * scoreThresholdMult) {
+                        scoreThreshold = 0;
+                        EventManager.instance.QueueEvent(new ScoreAmountEvent());
+                    }
+                     */
+
+                    int randNum = Random.Range(0, 30);
+                    if (randNum == 4) EventManager.instance.QueueEvent(new ScoreAmountEvent());
                 }
             }
             yield return null;
@@ -122,10 +155,6 @@ public class GameManager : MonoBehaviour, IEventListener {
         paused = false;
     }
 
-    public bool OnStationDestroyed(IEvent evt) {
-        return true;
-    }
-
     public bool OnEarthHit(IEvent evt) {
         m_earthHP--;
         if (m_earthHP <= 0) {
@@ -133,8 +162,9 @@ public class GameManager : MonoBehaviour, IEventListener {
             Time.timeScale = 0f;
             paused = true;
             EventManager.instance.QueueEvent(new GameOver());
+            SubmitStats();
         }
-        return true;
+        return false;
     }
 
     void Update() {
@@ -164,7 +194,7 @@ public class GameManager : MonoBehaviour, IEventListener {
 
 
 
-                if (Input.GetKey(KeyCode.Space)) {
+                if (Input.GetKeyDown(KeyCode.Space)) {
                     RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100f, earthMask);
                     if (hit.collider == null) {
                         LaunchConvenientMissile();
@@ -206,10 +236,25 @@ public class GameManager : MonoBehaviour, IEventListener {
                 if (!missileCheck && !ourMissileCheck && !explosionCheck) {
                     paused = true;
                     GUISystem.instance.OnRoundOver();
-                    Time.timeScale = 0f;
+                    RoundEndCalc();
+                    EventManager.instance.QueueEvent(new GameRoundEnd());
+                    //Time.timeScale = 0f;
                 }
             }
         }
+    }
+
+    void RoundEndCalc() {
+        m_score += remainingMissiles() * 5;
+        m_score += earthHP * 100;
+        scoreThreshold += remainingMissiles() * 5;
+        scoreThreshold += earthHP * 100;
+    }
+
+    void SubmitStats() {
+        KongregateAPI.instance.SubmitStats("HighScore", m_score);
+        KongregateAPI.instance.SubmitStats("GameCompleted", 1);
+        KongregateAPI.instance.SubmitStats("HighestRound", m_round);
     }
 
     public void BeginNewRound() {
@@ -314,9 +359,15 @@ public class GameManager : MonoBehaviour, IEventListener {
     }
 
     IEnumerator GameRound() {
+        if (scoreThreshold > 10000) {
+            m_earthHP++;
+            scoreThreshold -= 10000;
+        }
+        if (earthHP > 6) m_earthHP = 6;
         roundSpawnDone = false;
-        int numWaves = m_round;
-        int missilesPerWave = 4 + m_round/2;
+        EventManager.instance.QueueEvent(new GameRoundBegin());
+        int numWaves = 2 + Mathf.FloorToInt(m_round / 4.0f);
+        int missilesPerWave = 4 + Mathf.FloorToInt(m_round / 5.0f);
         for (int i = 0; i < numWaves; i++) {
             for (int j = 0; j < missilesPerWave; j++) {
                 SpawnMissile();
@@ -328,11 +379,11 @@ public class GameManager : MonoBehaviour, IEventListener {
 
     IEnumerator SpawnMissiles() {
         while (true) {
-            int numMissiles = 4;
+            int numMissiles = 4 + Mathf.FloorToInt(m_round / 2.0f);
             for (int i = 0; i < numMissiles; i++) {
                 SpawnMissile();
             }
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(4f);
         }
     }
 }

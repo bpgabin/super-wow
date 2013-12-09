@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public class OutOfAmmo : BaseEvent { }
+
 public class StationScript : MonoBehaviour {
 
     public Sprite[] ammoSprites;
@@ -32,7 +34,10 @@ public class StationScript : MonoBehaviour {
 
     public void OnStationFired() {
         m_ammo--;
-        if (m_ammo < 0) m_ammo = 0;
+        if (m_ammo <= 0) {
+            EventManager.instance.QueueEvent(new OutOfAmmo());
+            m_ammo = 0;
+        }
         SetStationSprite();
     }
 }

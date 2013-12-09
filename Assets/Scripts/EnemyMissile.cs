@@ -34,7 +34,7 @@ public class EnemyMissile : MonoBehaviour {
 
         rigidbody2D.velocity = new Vector2(xSpeed, ySpeed);
 
-        speed += GameManager.instance.round / 4.0f;
+        speed += GameManager.instance.round / 12.0f;
 	}
 
     void FixedUpdate() {

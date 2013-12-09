@@ -51,17 +51,17 @@ AnimationClip:
         value: {x: -8.9663744, y: -6.29230833, z: -3.5}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
-        tangentMode: 53
+        tangentMode: -1067450368
       - time: 18.0666676
         value: {x: -8.9663744, y: -6.29230833, z: -3.5}
         inSlope: {x: 14.9439955, y: 0, z: 0}
         outSlope: {x: 14.9439955, y: 0, z: 0}
-        tangentMode: 0
+        tangentMode: -1067450368
       - time: 18.3666668
         value: {x: 0, y: -6.29230833, z: -3.5}
         inSlope: {x: 29.887991, y: 0, z: 0}
         outSlope: {x: 29.887991, y: 0, z: 0}
-        tangentMode: 119
+        tangentMode: 71
       m_PreInfinity: 2
       m_PostInfinity: 2
     path: credits
@@ -77,7 +77,7 @@ AnimationClip:
         value: {x: 9.0336237, y: -5.29230833, z: -3.5}
         inSlope: {x: .0305729527, y: .0230419915, z: 0}
         outSlope: {x: .0305729527, y: .0230419915, z: 0}
-        tangentMode: 33558528
+        tangentMode: 0
       - time: 16.2333336
         value: {x: 9.0336237, y: -5.29230833, z: -3.5}
         inSlope: {x: 0, y: 0, z: 0}
@@ -87,12 +87,12 @@ AnimationClip:
         value: {x: 9.0336237, y: -5.29230833, z: -3.5}
         inSlope: {x: -12.318574, y: 0, z: 0}
         outSlope: {x: -12.318574, y: 0, z: 0}
-        tangentMode: 1344
+        tangentMode: 40
       - time: 17.6000004
         value: {x: 0, y: -5.29230833, z: -3.5}
         inSlope: {x: -24.6371479, y: 0, z: 0}
         outSlope: {x: -24.6371479, y: 0, z: 0}
-        tangentMode: 6619252
+        tangentMode: 143
       m_PreInfinity: 2
       m_PostInfinity: 2
     path: instructions
@@ -103,22 +103,22 @@ AnimationClip:
         value: {x: -8, y: -4.80000019, z: -3.5}
         inSlope: {x: -.0877193138, y: .046083983, z: 0}
         outSlope: {x: -.0877193138, y: .046083983, z: 0}
-        tangentMode: 1
+        tangentMode: 841275952
       - time: 15.0166664
         value: {x: -8.9663744, y: -4.29230833, z: -3.5}
         inSlope: {x: -.0438596569, y: .0230419915, z: 0}
         outSlope: {x: -.0438596569, y: .0230419915, z: 0}
-        tangentMode: 0
+        tangentMode: 1096810496
       - time: 16.2333336
         value: {x: -8.9663744, y: -4.29230833, z: -3.5}
         inSlope: {x: 9.60681915, y: 0, z: 0}
         outSlope: {x: 9.60681915, y: 0, z: 0}
-        tangentMode: 3014704
+        tangentMode: 0
       - time: 16.7000008
         value: {x: 0, y: -4.29230833, z: -3.5}
         inSlope: {x: 19.2136383, y: 0, z: 0}
         outSlope: {x: 19.2136383, y: 0, z: 0}
-        tangentMode: 0
+        tangentMode: 1116995584
       m_PreInfinity: 2
       m_PostInfinity: 2
     path: options
@@ -129,70 +129,22 @@ AnimationClip:
         value: {x: 8.61999989, y: -3.54999995, z: -3.5}
         inSlope: {x: .0375452787, y: .0460836999, z: 0}
         outSlope: {x: .0375452787, y: .0460836999, z: 0}
-        tangentMode: 122285316
+        tangentMode: 1100148463
       - time: 15.0166664
         value: {x: 9.0336237, y: -3.04231119, z: -3.5}
         inSlope: {x: -7.72432518, y: .0261636321, z: 0}
         outSlope: {x: -7.72432518, y: .0261636321, z: 0}
-        tangentMode: 0
+        tangentMode: 837419240
       - time: 15.6000004
         value: {x: 0, y: -3.03866911, z: -3.5}
         inSlope: {x: -15.4861956, y: .00624356279, z: 0}
         outSlope: {x: -15.4861956, y: .00624356279, z: 0}
-        tangentMode: 0
+        tangentMode: 1100148463
       m_PreInfinity: 2
       m_PostInfinity: 2
     path: start
   m_ScaleCurves: []
-  m_FloatCurves:
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 7.0999999
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 18.3666668
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: m_Enabled
-    path: start
-    classID: 82
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 10.9499998
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 18.3666668
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: m_Enabled
-    path: options
-    classID: 82
-    script: {fileID: 0}
+  m_FloatCurves: []
   m_PPtrCurves: []
   m_SampleRate: 60
   m_WrapMode: 0
@@ -652,53 +604,19 @@ AnimationClip:
     path: start
     classID: 4
     script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 7.0999999
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 18.3666668
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: m_Enabled
-    path: start
-    classID: 82
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 10.9499998
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      - time: 18.3666668
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 31
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: m_Enabled
-    path: options
-    classID: 82
-    script: {fileID: 0}
   m_EulerEditorCurves: []
-  m_Events: []
+  m_Events:
+  - time: 6.98333311
+    functionName: PlayClip2
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 9.46666622
+    functionName: PlayClip1
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

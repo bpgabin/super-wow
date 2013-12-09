@@ -18,7 +18,22 @@ public class KongregateAPI : MonoBehaviour {
 	public string username = "Guest";
 	public int userID = 0;
 	public string gameAuthToken = "";
-	
+
+    private static KongregateAPI s_instance = null;
+    public static KongregateAPI instance {
+        get {
+            if (s_instance == null) {
+                GameObject go = new GameObject("KongAPI");
+                s_instance = go.AddComponent<KongregateAPI>();
+            }
+            return s_instance;
+        }
+    }
+
+    public void InitialStart() {
+
+    }
+
 	void Awake() {
 		DontDestroyOnLoad(gameObject);
 		

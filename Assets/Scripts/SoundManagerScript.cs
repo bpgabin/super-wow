@@ -11,6 +11,8 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
     public AudioSource idle2;
     public AudioSource idle3;
     public AudioSource idle4;
+    public AudioSource roundStart;
+    public AudioSource roundEnd;
     private int num = 0;
 	private int randNumSide;
     private string[] captions;
@@ -21,7 +23,11 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
 
 	// Use this for initialization
 	void Awake () {
-        EventManager.instance.AddListener(this, "StationDestroyed", OnStationDestroyed);
+        EventManager.instance.AddListener(this, "StationDestroyed", this.OnStationDestroyed);
+        EventManager.instance.AddListener(this, "OutOfAmmo", this.OnAmmoEmpty);
+        EventManager.instance.AddListener(this, "ScoreAmountEvent", this.OnScore);
+        EventManager.instance.AddListener(this, "GameRoundBegin", this.OnGameRoundBegin);
+        EventManager.instance.AddListener(this, "GameRoundEnd", this.OnRoundEnd);
 
 		soundQueue = new Queue<int>();
 
@@ -31,10 +37,10 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
         captions[2] = "SUCH DEFENS";
         captions[3] = "SUPER WOW";
         captions[4] = "TARGHET SUCH DESTROYD";
-        captions[5] = "WOW - SO IMPACT, SUCH HURTING";
-        captions[6] = "NO BOOM ROKITS, SO SADNESS";
+        captions[5] = "WOW - SO IMPACT, SUCH HERTING";
+        captions[6] = "NO BOOM ROKITS, SO SADENING";
 
-		chatter = new AudioSource[7];
+		chatter = new AudioSource[9];
 		chatter[0] = idle1;
 		chatter[1] = idle2;
 		chatter[2] = idle3;
@@ -42,6 +48,8 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
 		chatter[4] = suchDestroyed;
 		chatter[5] = stationDown;
 		chatter[6] = noAmmo;
+        chatter[7] = roundStart;
+        chatter[8] = roundEnd;
 
 
         StartCoroutine("PlayASound");
@@ -49,8 +57,11 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
 	
 	// Update is called once per frame
 	void Update () {
-
-		if (soundQueue.Count > 0) 
+        bool clipPlaying = false;
+        foreach (AudioSource audio in chatter) {
+            if (audio.isPlaying) clipPlaying = true;
+        }
+		if (soundQueue.Count > 0 && !clipPlaying && !GUISystem.instance.captionPlaying) 
 		{
 			int dequeued = soundQueue.Dequeue ();
 			chatter[dequeued].Play();
@@ -63,19 +74,30 @@ public class SoundManagerScript : MonoBehaviour, IEventListener {
 
 
     public bool OnStationDestroyed(IEvent evt) {
+        soundQueue.Clear();
 		soundQueue.Enqueue(5);
-        return true;
+        return false;
+    }
+
+    public bool OnRoundEnd(IEvent evt) {
+        roundEnd.Play();
+        return false;
     }
 
 	public bool OnAmmoEmpty(IEvent evt) {
 		soundQueue.Enqueue (6);
-		return true;
+		return false;
 	}
+
+    public bool OnGameRoundBegin(IEvent evt) {
+        roundStart.Play();
+        return false;
+    }
 
 	// Every time score goes to 1000;
 	public bool OnScore(IEvent evt) {
 		soundQueue.Enqueue (4);
-        return true;
+        return false;
     }
 
     IEnumerator PlayASound() {
